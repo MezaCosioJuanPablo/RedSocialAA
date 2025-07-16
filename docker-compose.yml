@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  post-service:
+    build:
+      context: ./post-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://post-db:3306/postdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - post-db
+    networks:
+      - red-aventura
+
+  user-service:
+    build:
+      context: ./user-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://user-db:3306/userdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - user-db
+    networks:
+      - red-aventura
+
+  post-db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: postdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"
+    networks:
+      - red-aventura
+
+  user-db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: userdb
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    networks:
+      - red-aventura
+
+networks:
+  red-aventura:
+    driver: bridge
